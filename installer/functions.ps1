@@ -31,3 +31,9 @@ function Install-Tool {
 
     Write-Log "Installed $($Tool.name)"
 }
+
+if ($tool.type -eq "msi") {
+    Start-Process "msiexec.exe" -ArgumentList "/i `"$tempPath`" $($tool.silent)" -Wait
+} else {
+    Start-Process $tempPath -Wait
+}
