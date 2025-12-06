@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Malwarebytes",
+    "url": "https://downloads.malwarebytes.com/file/mb4_offline",
+    "silent": "/S"
+  },
+  {
+    "name": "WinDirStat",
+    "url": "https://sourceforge.net/projects/windirstat/files/latest/download",
+    "silent": null
+  },
+  {
+    "name": "Everything Search",
+    "url": "https://www.voidtools.com/Everything-1.4.1.1022.x64-Setup.exe",
+    "silent": "/S"
+  },
+  {
+    "name": "CrystalDiskInfo",
+    "url": "https://osdn.net/projects/crystaldiskinfo/downloads/77993/CrystalDiskInfo8_17_4.exe",
+    "silent": "/S"
+  },
+  {
+    "name": "Sysinternals Suite",
+    "url": "https://download.sysinternals.com/files/SysinternalsSuite.zip",
+    "silent": null
+  }
+]

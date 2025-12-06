@@ -1,0 +1,1 @@
+This folder stores icons used in the S&M GUI.
