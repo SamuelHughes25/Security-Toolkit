@@ -1,66 +1,31 @@
 [
-  {
-    "name": "Malwarebytes",
-    "url": "https://downloads.malwarebytes.com/file/mb4_offline",
-    "silent": "/S",
-    "description": "Advanced anti-malware software to detect and remove threats.",
-    "category": "Antivirus",
-    "icon": "assets/icons/malwarebytes.png"
-  },
-  {
-    "name": "WinDirStat",
-    "url": "https://sourceforge.net/projects/windirstat/files/latest/download",
-    "silent": null,
-    "description": "Disk usage statistics viewer and cleanup tool.",
-    "category": "Maintenance",
-    "icon": "assets/icons/windirstat.png"
-  },
-  {
-    "name": "Everything Search",
-    "url": "https://www.voidtools.com/Everything-1.4.1.1022.x64-Setup.exe",
-    "silent": "/S",
-    "description": "Fast file and folder search utility for Windows.",
-    "category": "Utilities",
-    "icon": "assets/icons/everything.png"
-  },
-  {
-    "name": "CrystalDiskInfo",
-    "url": "https://osdn.net/projects/crystaldiskinfo/downloads/77993/CrystalDiskInfo8_17_4.exe",
-    "silent": "/S",
-    "description": "Monitors hard drive health and S.M.A.R.T. status.",
-    "category": "Maintenance",
-    "icon": "assets/icons/crystaldiskinfo.png"
-  },
-  {
-    "name": "Sysinternals Suite",
-    "url": "https://download.sysinternals.com/files/SysinternalsSuite.zip",
-    "silent": null,
-    "description": "Collection of advanced system utilities for Windows troubleshooting.",
-    "category": "Utilities",
-    "icon": "assets/icons/sysinternals.png"
-  },
-  {
-    "name": "ESET Online Scanner",
-    "url": "https://www.eset.com/int/home/online-scanner/",
-    "silent": null,
-    "description": "Lightweight online malware scanner for on-demand scanning.",
-    "category": "Antivirus",
-    "icon": "assets/icons/eset.png"
-  },
-  {
-    "name": "CCleaner",
-    "url": "https://download.ccleaner.com/ccsetup598.exe",
-    "silent": "/S",
-    "description": "Cleans temporary files, caches, and registry issues to free up space.",
-    "category": "Maintenance",
-    "icon": "assets/icons/ccleaner.png"
-  },
-  {
-    "name": "Autoruns",
-    "url": "https://download.sysinternals.com/files/Autoruns.zip",
-    "silent": null,
-    "description": "Displays auto-start programs, allowing control of startup entries.",
-    "category": "Utilities",
-    "icon": "assets/icons/autoruns.png"
-  }
+    {
+        "name": "Windows Defender",
+        "url": "https://example.com/defender.exe",
+        "silent": "/quiet",
+        "type": "exe",
+        "category": "Security"
+    },
+    {
+        "name": "Malwarebytes",
+        "url": "https://example.com/malwarebytes.exe",
+        "silent": "/quiet",
+        "type": "exe",
+        "category": "Security"
+    },
+    {
+        "name": "WinDirStat",
+        "url": "https://github.com/SamuelHughes25/Security-Toolkit/raw/main/installer/static/WinDirStat-x64 (1).msi",
+        "silent": "/quiet",
+        "type": "msi",
+        "category": "Maintenance"
+    },
+    {
+        "name": "CCleaner",
+        "url": "https://example.com/ccleaner.exe",
+        "silent": "/S",
+        "type": "exe",
+        "category": "Maintenance"
+    }
 ]
+

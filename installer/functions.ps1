@@ -1,39 +1,61 @@
-# Shared functions for S&M Toolkit
+# functions.ps1 - helper functions for S&M Toolkit installer
 
-function Write-Log {
-    param([string]$msg)
-    Add-Content "$env:TEMP\SM-Toolkit.log" "[$(Get-Date)] $msg"
+#---------------------------------------
+# Download-Tool
+# Downloads a tool from URL to specified folder
+# Handles .exe and .msi
+#---------------------------------------
+function Download-Tool {
+    param (
+        [Parameter(Mandatory=$true)][string]$Url,
+        [Parameter(Mandatory=$true)][string]$Destination
+    )
+
+    try {
+        Invoke-WebRequest -Uri $Url -OutFile $Destination -UseBasicParsing
+        Write-Host "Downloaded $Destination successfully"
+        return $true
+    } catch {
+        Write-Host "Failed to download $Url"
+        return $false
+    }
 }
 
-function Load-Tools {
-    return Get-Content "$PSScriptRoot\tools.json" | ConvertFrom-Json
-}
-
-function Download-File {
-    param($Url, $Destination)
-
-    Write-Log "Downloading $Url"
-    Invoke-WebRequest -Uri $Url -OutFile $Destination -UseBasicParsing
-}
-
+#---------------------------------------
+# Install-Tool
+# Installs a tool silently based on type (exe/msi)
+#---------------------------------------
 function Install-Tool {
-    param($Tool)
+    param (
+        [Parameter(Mandatory=$true)][psobject]$Tool,
+        [Parameter(Mandatory=$true)][string]$InstallFolder
+    )
 
-    $tempPath = "$env:TEMP\$($Tool.name).exe"
+    # Determine file extension from URL
+    $uri = [System.Uri]$Tool.url
+    $ext = [System.IO.Path]::GetExtension($uri.AbsolutePath)
+    if ([string]::IsNullOrEmpty($ext)) { $ext = ".exe" }
 
-    Download-File $Tool.url $tempPath
+    # Construct full path
+    $installerPath = Join-Path $InstallFolder "$($Tool.name)$ext"
 
-    if ($Tool.silent) {
-        Start-Process $tempPath -ArgumentList $Tool.silent -Wait
-    } else {
-        Start-Process $tempPath -Wait
+    # Download
+    if (-not (Download-Tool -Url $Tool.url -Destination $installerPath)) {
+        Write-Host "Skipping $($Tool.name) due to download failure"
+        return $false
     }
 
-    Write-Log "Installed $($Tool.name)"
-}
-
-if ($tool.type -eq "msi") {
-    Start-Process "msiexec.exe" -ArgumentList "/i `"$tempPath`" $($tool.silent)" -Wait
-} else {
-    Start-Process $tempPath -Wait
+    # Install silently
+    try {
+        if ($Tool.type -eq "msi") {
+            Start-Process "msiexec.exe" -ArgumentList "/i `"$installerPath`" $($Tool.silent)" -Wait
+        } else {
+            Start-Process $installerPath -ArgumentList $Tool.silent -Wait
+        }
+        Write-Host "$($Tool.name) installed successfully"
+        return $true
+    } catch {
+        Write-Host "Installation failed for $($Tool.name): $_"
+        return $false
+    }
 }
