@@ -1,31 +1,54 @@
 [
     {
-        "name": "Windows Defender",
-        "url": "https://example.com/defender.exe",
-        "silent": "/quiet",
-        "type": "exe",
-        "category": "Security"
+        "name": "Malwarebytes",
+        "url": "https://data-cdn.mbamupdates.com/web/mb-windows/MBSetup.exe",
+        "type": "dynamic",
+        "category": "Security",
+        "silent_args": "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
     },
     {
-        "name": "Malwarebytes",
-        "url": "https://example.com/malwarebytes.exe",
-        "silent": "/quiet",
-        "type": "exe",
+        "name": "Windows Defender",
+        "url": "static/WindowsDefender.exe",
+        "type": "static",
         "category": "Security"
     },
     {
         "name": "WinDirStat",
-        "url": "https://github.com/SamuelHughes25/Security-Toolkit/raw/main/installer/static/WinDirStat-x64 (1).msi",
-        "silent": "/quiet",
-        "type": "msi",
+        "url": "static/WinDirStat-x64.msi",
+        "type": "static",
+        "category": "Maintenance"
+    },
+    {
+        "name": "Recovery Toolbox",
+        "url": "https://www.recoverytoolbox.com/download/RecoveryToolboxForExcelInstall.exe",
+        "type": "dynamic",
+        "category": "Security",
+        "silent_args": "/S"
+    },
+    {
+        "name": "WinRAR",
+        "url": "static/winrar-x64.exe",
+        "type": "static",
         "category": "Maintenance"
     },
     {
         "name": "CCleaner",
-        "url": "https://example.com/ccleaner.exe",
-        "silent": "/S",
-        "type": "exe",
+        "url": "https://download.ccleaner.com/ccsetup.exe",
+        "type": "dynamic",
+        "category": "Maintenance",
+        "silent_args": "/S"
+    },
+    {
+        "name": "Defraggler",
+        "url": "https://download.ccleaner.com/dfsetup.exe",
+        "type": "dynamic",
+        "category": "Maintenance",
+        "silent_args": "/S"
+    },
+    {
+        "name": "VLC Media Player",
+        "url": "static/vlc-3.0.18.exe",
+        "type": "static",
         "category": "Maintenance"
     }
 ]
-
