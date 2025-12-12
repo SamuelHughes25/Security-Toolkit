@@ -5,6 +5,8 @@ import subprocess
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from threading import Thread
+import ctypes
+import sys
 
 # ----------------------------
 # Constants
@@ -12,8 +14,33 @@ from threading import Thread
 CLIENT_WIDTH = 315
 CLIENT_HEIGHT = 245
 STATIC_DIR = "static"
-GITHUB_RAW_BASE = "https://raw.githubusercontent.com/SamuelHughes25/Security-Toolkit/main"
+GITHUB_RAW_BASE = "https://raw.githubusercontent.com/SamuelHughes25/Security-Toolkit/main/installer"
 TOOLS_JSON_URL = f"{GITHUB_RAW_BASE}/tools.json"
+
+# ----------------------------
+# Admin Elevation Check
+# ----------------------------
+def is_admin():
+    """Check if the script is running with administrator privileges."""
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+def run_as_admin():
+    """Re-launch the script with administrator privileges."""
+    try:
+        # Use pythonw.exe to avoid showing console window
+        python_exe = sys.executable
+        if python_exe.lower().endswith('python.exe'):
+            python_exe = python_exe[:-10] + 'pythonw.exe'
+
+        ctypes.windll.shell32.ShellExecuteW(
+            None, "runas", python_exe, " ".join(sys.argv), None, 1
+        )
+    except:
+        pass
+    sys.exit()
 
 # ----------------------------
 # Functions (integrated from functions.py)
@@ -22,8 +49,15 @@ def download_tool(url, destination):
     """Download a tool from URL to a specified folder."""
     try:
         os.makedirs(os.path.dirname(destination), exist_ok=True)
-        response = requests.get(url, stream=True, timeout=30)
+        
+        # Use headers to avoid being blocked
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        
+        response = requests.get(url, stream=True, timeout=30, headers=headers)
         response.raise_for_status()
+        
         with open(destination, "wb") as f:
             for chunk in response.iter_content(8192):
                 if chunk:
@@ -86,7 +120,7 @@ def install_tool(tool_config, install_folder, silent=False):
     # Build installation command
     try:
         if ext == '.msi':
-            # MSI installer
+            # MSI installer - always use msiexec
             args = ["msiexec.exe", "/i", installer_path]
             if silent:
                 args += ["/quiet", "/norestart"]
@@ -100,10 +134,19 @@ def install_tool(tool_config, install_folder, silent=False):
         
         print(f"Running installer: {' '.join(args)}")
         
-        # Run the installer and wait for it to complete
-        result = subprocess.run(args, check=True)
-        print(f"{tool_name} installed successfully")
-        return True
+        # Use ShellExecute to run with admin rights if needed
+        if not is_admin() and not silent:
+            # For interactive installs, try to elevate
+            ctypes.windll.shell32.ShellExecuteW(
+                None, "runas", args[0], " ".join(args[1:]) if len(args) > 1 else "", None, 1
+            )
+            print(f"{tool_name} installer launched with elevation")
+            return True
+        else:
+            # Run directly if we're already admin or in silent mode
+            result = subprocess.run(args, check=True)
+            print(f"{tool_name} installed successfully")
+            return True
         
     except subprocess.CalledProcessError as e:
         print(f"Installation failed for {tool_name}: {e}")
@@ -139,6 +182,13 @@ def load_tools_from_github():
     print("Using default tool configuration")
     return [
         {
+            "name": "Malwarebytes",
+            "url": "https://data-cdn.mbamupdates.com/web/mb-windows/MBSetup.exe",
+            "type": "dynamic",
+            "category": "Security",
+            "silent_args": "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
+        },
+        {
             "name": "WinDirStat",
             "url": "static/WinDirStat-x64.msi",
             "type": "static",
@@ -146,22 +196,24 @@ def load_tools_from_github():
         },
         {
             "name": "WinRAR",
-            "url": "static/winrar-x64.exe",
+            "url": "static/winrar-x64-713.exe",
             "type": "static",
-            "category": "Maintenance"
+            "category": "Maintenance",
+            "silent_args": "/S"
         },
         {
             "name": "VLC Media Player",
-            "url": "static/vlc-3.0.18.exe",
+            "url": "static/vlc-3.0.21-win64.exe",
             "type": "static",
-            "category": "Maintenance"
+            "category": "Maintenance",
+            "silent_args": "/L=1033 /S"
         },
         {
-            "name": "Malwarebytes",
-            "url": "https://data-cdn.mbamupdates.com/web/mb-windows/MBSetup.exe",
+            "name": "7-Zip",
+            "url": "https://www.7-zip.org/a/7z2408-x64.exe",
             "type": "dynamic",
-            "category": "Security",
-            "silent_args": "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
+            "category": "Maintenance",
+            "silent_args": "/S"
         }
     ]
 
@@ -182,6 +234,10 @@ root.title("Security Toolkit Installer")
 root.geometry(f"{CLIENT_WIDTH}x{CLIENT_HEIGHT}")
 root.resizable(False, False)
 
+# Add admin status indicator
+if is_admin():
+    root.title("Security Toolkit Installer [ADMIN]")
+
 # ----------------------------
 # Stage frames
 # ----------------------------
@@ -196,13 +252,25 @@ for frame in (stage1, stage2, stage3):
 # ----------------------------
 # Stage 1: Welcome
 # ----------------------------
-tk.Label(stage1, text="Welcome to Security Toolkit Installer", 
-         font=("Segoe UI", 14), wraplength=300).pack(pady=40)
+welcome_text = "Welcome to Security Toolkit Installer"
+if not is_admin():
+    welcome_text += "\n\n⚠️ Not running as Admin\nSome installers may require elevation"
+
+tk.Label(stage1, text=welcome_text, 
+         font=("Segoe UI", 12), wraplength=280, justify='center').pack(pady=30)
 
 def goto_stage2():
     stage2.tkraise()
 
-tk.Button(stage1, text="Continue", width=15, command=goto_stage2).pack(pady=20)
+tk.Button(stage1, text="Continue", width=15, command=goto_stage2).pack(pady=10)
+
+# Add "Run as Admin" button if not admin
+if not is_admin():
+    def request_admin():
+        run_as_admin()
+    
+    tk.Button(stage1, text="Restart as Admin", width=15, 
+              command=request_admin, bg='#FF9800').pack(pady=5)
 
 # ----------------------------
 # Stage 2: App Selection
@@ -366,6 +434,18 @@ def install_selected_apps():
     if not tools_to_install:
         messagebox.showwarning("No Tools", "No tools selected for installation.")
         return
+    
+    # Warn if not admin and not in silent mode
+    if not is_admin() and not silent_var.get():
+        result = messagebox.askyesno(
+            "Admin Rights Required",
+            "You are not running as Administrator.\n\n"
+            "Installers will request elevation individually.\n"
+            "This may cause issues with sequential installation.\n\n"
+            "Continue anyway?"
+        )
+        if not result:
+            return
     
     # Disable button during installation
     start_btn_stage3.config(state='disabled', text="Installing...")

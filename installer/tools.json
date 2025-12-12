@@ -1,54 +1,33 @@
 [
     {
-        "name": "Malwarebytes",
-        "url": "https://data-cdn.mbamupdates.com/web/mb-windows/MBSetup.exe",
-        "type": "dynamic",
-        "category": "Security",
-        "silent_args": "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
-    },
-    {
-        "name": "Windows Defender",
-        "url": "static/WindowsDefender.exe",
-        "type": "static",
-        "category": "Security"
-    },
-    {
         "name": "WinDirStat",
         "url": "static/WinDirStat-x64.msi",
         "type": "static",
-        "category": "Maintenance"
-    },
-    {
-        "name": "Recovery Toolbox",
-        "url": "https://www.recoverytoolbox.com/download/RecoveryToolboxForExcelInstall.exe",
-        "type": "dynamic",
-        "category": "Security",
-        "silent_args": "/S"
+        "category": "Maintenance",
+        "notes": "Disk usage analyzer - shows what's taking up space"
     },
     {
         "name": "WinRAR",
-        "url": "static/winrar-x64.exe",
+        "url": "static/winrar-x64-713.exe",
         "type": "static",
-        "category": "Maintenance"
+        "category": "Maintenance",
+        "silent_args": "/S",
+        "notes": "Archive extraction tool"
     },
     {
-        "name": "CCleaner",
-        "url": "https://download.ccleaner.com/ccsetup.exe",
+        "name": "7-Zip",
+        "url": "https://www.7-zip.org/a/7z2408-x64.exe",
         "type": "dynamic",
         "category": "Maintenance",
-        "silent_args": "/S"
-    },
-    {
-        "name": "Defraggler",
-        "url": "https://download.ccleaner.com/dfsetup.exe",
-        "type": "dynamic",
-        "category": "Maintenance",
-        "silent_args": "/S"
+        "silent_args": "/S",
+        "notes": "Free alternative to WinRAR - open source"
     },
     {
         "name": "VLC Media Player",
-        "url": "static/vlc-3.0.18.exe",
+        "url": "static/vlc-3.0.21-win64.exe",
         "type": "static",
-        "category": "Maintenance"
+        "category": "Maintenance",
+        "silent_args": "/L=1033 /S",
+        "notes": "Universal media player"
     }
 ]
